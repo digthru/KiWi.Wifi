@@ -8,14 +8,47 @@ var events = require('./constants/events');
 var config = require('./config');
 var tools = require('./libs/tools');
 var WebSocket = require('ws');
-
+var Gpio = require('onoff').Gpio;
+var led = new Gpio(26, 'out');
 var C = xbee_api.constants;
 var socket;
 
+var turnOnLED = function(){
+    led.writeSync(1);
+};
+
+var freeLED = function(){
+    led.unexport();
+};
+
+var turnOffLED = function(){
+    led.writeSync(0);
+};
+
+var _startBlinking = 0;
+var startBlinking = function(rate){
+    if(_startBlinking) return;
+    _startBlinking = setInterval(function(){
+        led.writeSync(led.readSync() === 0 ? 1 : 0)
+    }, rate);
+}
+
+var stopBlinking = function(){
+   clearTimeout(_startBlinking);
+}
+
+var _handleMessage;
 var handleMessage = function (msg) {
     var data = JSON.parse(msg.data);
 
     console.log(data);
+
+    startBlinking(200);
+    clearTimeout(handleMessage);
+    handleMessage = setTimeout(function(){
+    	stopBlinking();
+        turnOnLED();
+    }, 1000);
 
     switch (data.event) {
         case events.lock_lock_command:
@@ -35,6 +68,7 @@ var handleMessage = function (msg) {
 }
 
 var retryConnection = function (err) {
+    startBlinking(500);
     console.error(err);
     console.error('Trying again 5 seconds');
     setTimeout(createSocket, 5000);
@@ -57,6 +91,9 @@ var createSocket = function () {
         socket.onmessage = handleMessage;
         socket.onclose = retryConnection;
         socket.onerror = retryConnection;
+
+        stopBlinking();
+        turnOnLED();
     });
 };
 
@@ -99,8 +136,17 @@ var createXBee = function () {
     });
 };
 
+turnOnLED();
+
 if (config.production) {
     createXBee();
 } else {
     createSocket();
 }
+
+process.on('SIGINT', function(){
+   console.log('Terminating...');
+   turnOffLED();
+   freeLED();
+   process.exit();
+});
