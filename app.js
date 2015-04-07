@@ -12,6 +12,7 @@ var Gpio = require('onoff').Gpio;
 var led = new Gpio(26, 'out');
 var C = xbee_api.constants;
 var socket;
+var serialport, xbeeAPI;
 
 var turnOnLED = function(){
     led.writeSync(1);
@@ -35,6 +36,7 @@ var startBlinking = function(rate){
 
 var stopBlinking = function(){
    clearTimeout(_startBlinking);
+   _startBlinking = 0;
 }
 
 var _handleMessage;
@@ -48,20 +50,20 @@ var handleMessage = function (msg) {
     handleMessage = setTimeout(function(){
     	stopBlinking();
         turnOnLED();
-    }, 1000);
+    }, 5000);
 
     switch (data.event) {
         case events.lock_lock_command:
-            if (config.production) return serialport.write(xbeeAPI.buildFrame(commands.LOCK));
+            if (config.production && serialport) serialport.write(xbeeAPI.buildFrame(commands.LOCK));
             else console.log("locked");
             socket.send(JSON.stringify({event: events.lock_lock_command_success, locked: true}));
             break;
         case events.lock_unlock_command:
-            if (config.production) return serialport.write(xbeeAPI.buildFrame(commands.UNLOCK));
+            if (config.production && serialport) serialport.write(xbeeAPI.buildFrame(commands.UNLOCK));
             else console.log("unlocked");
             socket.send(JSON.stringify({event: events.lock_unlock_command_success, locked: false}));
             break;
-        case events.connected:
+        case events.connected:   
             socket.send(JSON.stringify({event: events.lock_manual, locked: true}));
             break;
     }
@@ -75,12 +77,15 @@ var retryConnection = function (err) {
 };
 
 var createSocket = function () {
+   
+    console.log('Creating socket');
+
     var password = tools.crypto.symmetric.encrypt(config.registration_password, config.registration_algorithm, config.registration_symmetric_key);
 
     request.get({
         url: 'http://' + config.domain + '/rest/socket/open?client_id=dev&action=lock&serial=' + config.lock_serial
     }, function (err, res, body) {
-        if (err) return retryConnection(e);
+        if (err) return retryConnection(err);
         try {
             body = JSON.parse(body);
         } catch (e) {
@@ -98,32 +103,16 @@ var createSocket = function () {
 };
 
 var createXBee = function () {
-    var xbeeAPI = new xbee_api.XBeeAPI({
-        api_mode: 1
+    xbeeAPI = new xbee_api.XBeeAPI({
+        api_mode: 2
     });
 
-    var serialport = new SerialPort("/dev/ttyAMA0", {
+    serialport = new SerialPort("/dev/ttyAMA0", {
         baudrate: 9600,
         parser: xbeeAPI.rawParser()
     });
 
-    serialport.on("open", function () {
-        var frame_obj = {
-            type: 0x10,
-            id: 0x01,
-            destination64: "0013A20040C1B8B4",
-            broadcastRadius: 0x00,
-            options: 0x00,
-            data: "lock"
-        };
-
-        serialport.write(xbeeAPI.buildFrame(frame_obj));
-
-        console.log('Sent to serial port.');
-
-        createSocket();
-
-    });
+    serialport.on("open", createSocket);
 
     serialport.on('data', function (data) {
         console.log('data received: ' + data);
