@@ -8,35 +8,33 @@ var events = require('./constants/events');
 var config = require('./config');
 var tools = require('./libs/tools');
 var WebSocket = require('ws');
-var Gpio = require('onoff').Gpio;
-var led = new Gpio(26, 'out');
 var C = xbee_api.constants;
 var socket;
 var serialport, xbeeAPI;
 
-var turnOnLED = function(){
+var turnOnLED = function () {
     led.writeSync(1);
 };
 
-var freeLED = function(){
+var freeLED = function () {
     led.unexport();
 };
 
-var turnOffLED = function(){
+var turnOffLED = function () {
     led.writeSync(0);
 };
 
 var _startBlinking = 0;
-var startBlinking = function(rate){
-    if(_startBlinking) return;
-    _startBlinking = setInterval(function(){
+var startBlinking = function (rate) {
+    if (_startBlinking) return;
+    _startBlinking = setInterval(function () {
         led.writeSync(led.readSync() === 0 ? 1 : 0)
     }, rate);
 }
 
-var stopBlinking = function(){
-   clearTimeout(_startBlinking);
-   _startBlinking = 0;
+var stopBlinking = function () {
+    clearTimeout(_startBlinking);
+    _startBlinking = 0;
 }
 
 var _handleMessage;
@@ -47,8 +45,8 @@ var handleMessage = function (msg) {
 
     startBlinking(200);
     clearTimeout(handleMessage);
-    handleMessage = setTimeout(function(){
-    	stopBlinking();
+    handleMessage = setTimeout(function () {
+        stopBlinking();
         turnOnLED();
     }, 5000);
 
@@ -63,7 +61,7 @@ var handleMessage = function (msg) {
             else console.log("unlocked");
             socket.send(JSON.stringify({event: events.lock_unlock_command_success, locked: false}));
             break;
-        case events.connected:   
+        case events.connected:
             socket.send(JSON.stringify({event: events.lock_manual, locked: true}));
             break;
     }
@@ -77,7 +75,7 @@ var retryConnection = function (err) {
 };
 
 var createSocket = function () {
-   
+
     console.log('Creating socket');
 
     var password = tools.crypto.symmetric.encrypt(config.registration_password, config.registration_algorithm, config.registration_symmetric_key);
@@ -117,9 +115,8 @@ var createXBee = function () {
     serialport.on('data', function (data) {
         console.log('data received: ' + data);
     });
-
-
-// All frames parsed by the XBee will be emitted here
+    
+    // All frames parsed by the XBee will be emitted here
     xbeeAPI.on("frame_object", function (frame) {
         console.log(">>", frame);
     });
@@ -133,9 +130,9 @@ if (config.production) {
     createSocket();
 }
 
-process.on('SIGINT', function(){
-   console.log('Terminating...');
-   turnOffLED();
-   freeLED();
-   process.exit();
+process.on('SIGINT', function () {
+    console.log('Terminating...');
+    turnOffLED();
+    freeLED();
+    process.exit();
 });

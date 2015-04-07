@@ -10,5 +10,6 @@ module.exports = {
     private_field_algorithm: 'aes-256-ctr',
     lock_serial: 'prototype',
     domain: 'kiwi.t.proxylocal.com',
-    production: true
+    production: true,
+    xbee_destination_64: "0013A200408A20BA"
 };
