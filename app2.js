@@ -21,15 +21,15 @@ var handleMessage = function (msg) {
         case events.lock_lock_command:
             if (config.production) return serialport.write(xbeeAPI.buildFrame(commands.LOCK));
             else console.log("locked");
-            socket.send(JSON.stringify({event: events.lock_lock_command_success, state: true}));
+            socket.send(JSON.stringify({event: events.lock_lock_command_success, locked: true}));
             break;
         case events.lock_unlock_command:
             if (config.production) return serialport.write(xbeeAPI.buildFrame(commands.UNLOCK));
             else console.log("unlocked");
-            socket.send(JSON.stringify({event: events.lock_unlock_command_success, state: false}));
+            socket.send(JSON.stringify({event: events.lock_unlock_command_success, locked: false}));
             break;
         case events.connected:
-            socket.send(JSON.stringify({event: events.lock_manual, state: true}));
+            socket.send(JSON.stringify({event: events.lock_manual, locked: true}));
             break;
     }
 }
