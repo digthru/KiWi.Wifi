@@ -1,4 +1,3 @@
-
 module.exports = {
     account_model_update: 1,
     lock_edit: 2,
@@ -19,5 +18,8 @@ module.exports = {
     lock_lock_command_fail: 17,
     lock_lock_command_success: 18,
     lock_unlock_command_fail: 19,
-    lock_unlock_command_success: 20
+    lock_unlock_command_success: 20,
+    invalid_password: 21,
+    lock_register_err: 22,
+    lock_manual: 24
 };

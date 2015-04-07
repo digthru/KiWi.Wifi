@@ -8,5 +8,7 @@ module.exports = {
     default_client_id: "dev",
     max_sockets_per_token: 3,
     private_field_algorithm: 'aes-256-ctr',
-    lock_serial: 'prototype'
+    lock_serial: 'prototype',
+    domain: 'kiwi.t.proxylocal.com',
+    production: false
 };
