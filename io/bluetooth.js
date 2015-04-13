@@ -20,4 +20,6 @@ module.exports = function Blueooth() {
             });
         })
     };
+
+    return this;
 }

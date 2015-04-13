@@ -1,9 +1,12 @@
 var util = require('util');
-var EventEmitter = require('events').EventEmitter;
+var Emitter = require('./../libs/emitter');
 var config = require('./../config');
+var tools = require('./../libs/tools');
+var request = require('request');
+var WebSocket = require('ws');
 
-module.exports = function Socket() {
-    var self = this;
+function Socket() {
+    var self = Emitter.attach(this);
     var socket;
 
     this.connect = function () {
@@ -21,7 +24,7 @@ module.exports = function Socket() {
             try {
                 body = JSON.parse(body);
             } catch (e) {
-                return self.emit('error', err);
+                return self.emit('error', body);
             }
 
             if (body.status) return self.emit('error', body.msg);
@@ -29,7 +32,7 @@ module.exports = function Socket() {
             socket = new WebSocket('ws://' + config.domain + '/socket?action=lock&secret=' + body.data.secret + '&password=' + password)
 
             socket.onopen = function(){
-                self.emit('open');
+                self.emit('connect');
             }
 
             socket.onmessage = function (msg) {
@@ -42,11 +45,13 @@ module.exports = function Socket() {
             };
 
             socket.onclose = function () {
-                self.emit('error', 'Socket closed');
+                self.emit('disconnect', 'Socket closed');
+		socket = undefined;
             };
 
             socket.onerror = function (err) {
                 self.emit('error', err);
+	        self.disconnect();
             };
         });
 
@@ -79,6 +84,8 @@ module.exports = function Socket() {
             socket = undefined;
         }
     };
+
+    return this;
 };
 
-util.inherits(Socket, EventEmitter);
+module.exports = Socket;

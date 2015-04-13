@@ -1,8 +1,16 @@
 var Gpio = require('onoff').Gpio;
 
+function Led(pin) {
+	
+var led;
 
-module.exports = function Led(pin) {
-    var led = new Gpio(pin, 'out');
+    try {
+	pin = parseInt(pin);
+
+ 	led   = new Gpio(pin, 'out');
+    } catch(e){
+   	throw new Error('Provide valid pin number');
+     }
 
     var blink_interval_id = 0;
     var blink_speed = 0;
@@ -10,7 +18,7 @@ module.exports = function Led(pin) {
     this.blink = function (speed) {
         if (blink_interval_id && speed === blink_speed) return;
         clearInterval(blink_interval_id);
-        blink_interval_id = setInterval(new function () {
+        blink_interval_id = setInterval(function () {
             if (led) led.writeSync(led.readSync() === 0 ? 1 : 0);
         }, speed || 500);
     }
@@ -36,4 +44,8 @@ module.exports = function Led(pin) {
         clearInterval(blink_interval_id);
         if (led) led.writeSync(1);
     }
+   
+    return this;
 };
+
+module.exports = Led;
