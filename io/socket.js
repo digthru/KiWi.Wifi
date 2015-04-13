@@ -17,8 +17,6 @@ function Socket() {
     this.connect = function () {
         if (socket) self.disconnect();
 		
-		bounce_out = bounce_in = 0;
-		
         var password = tools.crypto.symmetric.encrypt(config.registration_password, config.registration_algorithm, config.registration_symmetric_key);
 
         var _r;
@@ -78,7 +76,11 @@ function Socket() {
                 console.error(e);
             }
 	
-            socket.send(data);
+            try {
+				socket.send(data);
+			} catch(e){
+				console.error(e);
+			}
         }
     };
 
@@ -97,11 +99,14 @@ function Socket() {
     };
     
     this.bounce = function() {
+		clearInterval(bounce);
+		bounce_out = 0;
+		bounce_in = 0;
 		bounce = setInterval(function(){
 			bounce_out++;
 			self.send({event: events.bounce});
 			if(bounce_out != bounce_in + 1) {
-				console.error('Socket has mismatched bounce counts');
+				console.error('Socket has mismatched bounce counts ', bounce_out, bounce_in);
 				self.disconnect(); 
 			}
 		}, config.bounce_delay);
