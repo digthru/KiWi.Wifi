@@ -12,6 +12,10 @@ xbee.on('rx', function (msg) {
     console.log(msg);
 });
 
+xbee.on('debug', function (msg) {
+    console.log(msg);
+});
+
 xbee.write('unlock');
 
 process.on('SIGINT', function () {

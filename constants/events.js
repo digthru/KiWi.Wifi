@@ -21,5 +21,6 @@ module.exports = {
     lock_unlock_command_success: 20,
     invalid_password: 21,
     lock_register_err: 22,
-    lock_manual: 24
+    lock_manual: 24,
+    bounce: 25
 };
