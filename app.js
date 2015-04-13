@@ -30,11 +30,14 @@ socket.on('disconnect', function () {
 
 socket.on('error', function (err) {
     console.error(err);
+	led.blink(200);
 });
 
 socket.on('message', function (msg) {
     console.log(msg);
-	led.blink(500);
+    
+	led.blink(200);
+    setTimeout(led.on, 1500);
     
     switch (data.event) {
         case events.lock_lock_command:
@@ -52,6 +55,8 @@ socket.on('message', function (msg) {
 });
 
 socket.connect();
+
+console.log('here');
 
 process.on('SIGINT', function () {
 	process_end = true;
