@@ -58,14 +58,14 @@ var handleMessage = function (msg) {
             if (config.production && serialport) serialport.write(xbeeAPI.buildFrame(commands.LOCK));
             else console.log("locked");
             socket.send(JSON.stringify({event: events.lock_lock_command_success, locked: true}));
-	    createXBee(1);
+            createXBee(1);
             break;
         case events.lock_unlock_command:
             if (config.production && serialport) console.log('here');
             if (config.production && serialport) serialport.write(xbeeAPI.buildFrame(commands.UNLOCK));
             else console.log("unlocked");
             socket.send(JSON.stringify({event: events.lock_unlock_command_success, locked: false}));
-	    createXBee(1);
+            createXBee(1);
             break;
         case events.connected:
             socket.send(JSON.stringify({event: events.lock_manual, locked: true}));
@@ -116,15 +116,15 @@ var createXBee = function (f) {
         parser: xbeeAPI.rawParser()
     });
 
-    if(!f) serialport.on("open", createSocket);
-    else serialport.on("open", function(){
-      console.log('ready');
+    if (!f) serialport.on("open", createSocket);
+    else serialport.on("open", function () {
+        console.log('ready');
     });
 
     serialport.on('data', function (data) {
         console.log('data received: ' + data);
     });
-    
+
     // All frames parsed by the XBee will be emitted here
     xbeeAPI.on("frame_object", function (frame) {
         console.log(">>", frame);

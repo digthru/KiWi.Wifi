@@ -23,7 +23,7 @@ xbee.on('error', function (err) {
     setTimeout(xbee.connect, 5000);
 });
 
-socket.on('open', function(){
+socket.on('open', function () {
     yellow_led.on();
 });
 

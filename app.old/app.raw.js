@@ -15,26 +15,26 @@ var serialport = new SerialPort("/dev/ttyAMA0", {
 
 serialport.on("open", function () {
     var frame_obj = {
-        type: 0x10, 
-        id: 0x01, 
+        type: 0x10,
+        id: 0x01,
         destination64: "0013A200408A20BA",
         broadcastRadius: 0x00,
-        options: 0x00, 
-        data: "lock" 
+        options: 0x00,
+        data: "lock"
     };
-    
+
     serialport.write(xbeeAPI.buildFrame(frame_obj));
 
-    setTimeout(function(){
-     console.log('unlock');
-     serialport.write(xbeeAPI.buildFrame({
-        type: 0x10, 
-        id: 0x01, 
-        destination64: "0013A200408A20BA",
-        broadcastRadius: 0x00,
-        options: 0x00, 
-        data: "unlock" 
-    }));
+    setTimeout(function () {
+        console.log('unlock');
+        serialport.write(xbeeAPI.buildFrame({
+            type: 0x10,
+            id: 0x01,
+            destination64: "0013A200408A20BA",
+            broadcastRadius: 0x00,
+            options: 0x00,
+            data: "unlock"
+        }));
     }, 10000);
     console.log('Sent to serial port.');
 });

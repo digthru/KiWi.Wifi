@@ -1,16 +1,16 @@
 var Gpio = require('onoff').Gpio;
 
 function Led(pin) {
-	
-var led;
+
+    var led;
 
     try {
-	pin = parseInt(pin);
+        pin = parseInt(pin);
 
- 	led   = new Gpio(pin, 'out');
-    } catch(e){
-   	throw new Error('Provide valid pin number');
-     }
+        led = new Gpio(pin, 'out');
+    } catch (e) {
+        throw new Error('Provide valid pin number');
+    }
 
     var blink_interval_id = 0;
     var blink_speed = 0;
@@ -44,7 +44,7 @@ var led;
         clearInterval(blink_interval_id);
         if (led) led.writeSync(1);
     }
-   
+
     return this;
 };
 

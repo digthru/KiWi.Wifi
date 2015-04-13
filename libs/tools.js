@@ -14,7 +14,7 @@ module.exports.crypto = {
     }
 };
 
-exports.dfire = function(callback, args) {
+exports.dfire = function (callback, args) {
 
     if (typeof callback !== 'function') {
         return;
@@ -24,12 +24,12 @@ exports.dfire = function(callback, args) {
         return;
     }
 
-    process.nextTick(function() {
+    process.nextTick(function () {
         callback.apply(this, args);
     });
 };
 
-exports.fire = function(callback) {
+exports.fire = function (callback) {
 
     if (typeof callback !== 'function') {
         return;
@@ -38,13 +38,13 @@ exports.fire = function(callback) {
     var args = exports.array.args(arguments);
     args.splice(0, 1);
 
-    process.nextTick(function() {
+    process.nextTick(function () {
         callback.apply(this, args);
     });
 };
 
 
-exports.invoke = function(c, callback) {
+exports.invoke = function (c, callback) {
 
     if (typeof callback !== 'function') {
         return;
@@ -53,12 +53,12 @@ exports.invoke = function(c, callback) {
     var args = exports.array.args(arguments);
     var sliced = args.splice(0, 2);
 
-    process.nextTick(function() {
+    process.nextTick(function () {
         callback.apply(sliced[0], args);
     });
 };
 
-module.exports.hash = function(str) {
+module.exports.hash = function (str) {
 
     if (typeof str !== 'string') {
         return 0;

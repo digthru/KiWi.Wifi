@@ -10,7 +10,7 @@ function Socket() {
     var socket;
 
     this.connect = function () {
-        if(socket) self.disconnect();
+        if (socket) self.disconnect();
 
         var password = tools.crypto.symmetric.encrypt(config.registration_password, config.registration_algorithm, config.registration_symmetric_key);
 
@@ -31,7 +31,7 @@ function Socket() {
 
             socket = new WebSocket('ws://' + config.domain + '/socket?action=lock&secret=' + body.data.secret + '&password=' + password)
 
-            socket.onopen = function(){
+            socket.onopen = function () {
                 self.emit('connect');
             }
 
@@ -46,12 +46,12 @@ function Socket() {
 
             socket.onclose = function () {
                 self.emit('disconnect', 'Socket closed');
-		socket = undefined;
+                socket = undefined;
             };
 
             socket.onerror = function (err) {
                 self.emit('error', err);
-	        self.disconnect();
+                self.disconnect();
             };
         });
 
@@ -61,11 +61,11 @@ function Socket() {
         }, 4000);
     };
 
-    this.send = function(data){
-        if(socket){
+    this.send = function (data) {
+        if (socket) {
             try {
                 data = JSON.stringify(data);
-            } catch(e){
+            } catch (e) {
                 console.error(e);
             }
 

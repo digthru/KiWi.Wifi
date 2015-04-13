@@ -6,7 +6,7 @@ function Emitter(attachTo) {
     var silent = true;
     var ignore = [];
 
-    self.fireListeners = function(type) {
+    self.fireListeners = function (type) {
         type = type + "";
         try {
             if (typeof listeners[type] === 'undefined') {
@@ -27,7 +27,7 @@ function Emitter(attachTo) {
 
     self.emit = self.broadcast = self.fireListeners;
 
-    self.on = function(type, callback) {
+    self.on = function (type, callback) {
         type = type + "";
         if (typeof listeners[type] === 'undefined') {
             listeners[type] = {};
@@ -39,7 +39,7 @@ function Emitter(attachTo) {
         return self;
     };
 
-    self.off = function(type, callback) {
+    self.off = function (type, callback) {
         type = type + "";
         try {
             delete listeners[type][tools.hash(callback.toString()) + ''];
@@ -55,12 +55,12 @@ function Emitter(attachTo) {
         return self;
     };
 
-    self.silent = function(a) {
+    self.silent = function (a) {
         silent = typeof a === 'boolean' ? a : false;
         return self;
     };
 
-    self.silence = function(a) {
+    self.silence = function (a) {
         if (!Array.isArray(a)) {
             return;
         }
@@ -70,17 +70,17 @@ function Emitter(attachTo) {
     return self;
 }
 
-exports.attach = function(a) {
+exports.attach = function (a) {
     return new Emitter(a, 0);
 };
 
-exports.__call__ = function(a) {
+exports.__call__ = function (a) {
     var e;
     try {
         e = exports.attach({});
         return e;
     } finally {
-        process.nextTick(function(){
+        process.nextTick(function () {
             a(e);
         });
     }
