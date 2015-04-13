@@ -5,6 +5,7 @@ var tools = require('./../libs/tools');
 var request = require('request');
 var WebSocket = require('ws');
 var events = require('./../constants/events');
+var config = require('./../config');
 
 function Socket() {
     var self = Emitter.attach(this);
@@ -15,7 +16,9 @@ function Socket() {
 	
     this.connect = function () {
         if (socket) self.disconnect();
-
+		
+		bounce_out = bounce_in = 0;
+		
         var password = tools.crypto.symmetric.encrypt(config.registration_password, config.registration_algorithm, config.registration_symmetric_key);
 
         var _r;
@@ -101,7 +104,7 @@ function Socket() {
 				console.error('Socket has mismatched bounce counts');
 				self.disconnect(); 
 			}
-		}, 10000);
+		}, config.bounce_delay);
 	}
 
     return this;
