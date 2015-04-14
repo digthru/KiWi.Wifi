@@ -69,7 +69,7 @@ socket.on('message', function (data) {
     }
 });
 
-socket.connect();
+setTimeout(socket.connect, 10000);
 
 process.on('SIGINT', function () {
 	process_end = true;

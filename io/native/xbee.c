@@ -58,9 +58,9 @@ int main(int count, char ** args) {
 	address.addr64[2] = 0xA2;
 	address.addr64[3] = 0x00;
 	address.addr64[4] = 0x40;
-	address.addr64[5] = 0x8A;
+	address.addr64[5] = 0xB2;
 	address.addr64[6] = 0x20;
-	address.addr64[7] = 0xBA;
+	address.addr64[7] = 0x2F;
 
 	if ((ret = xbee_conNew(xbee, &con, "Data", &address)) != XBEE_ENONE) {
 		xbee_log(xbee, -1, "xbee_conNew() returned: %d (%s)", ret, xbee_errorToStr(ret));
