@@ -1,5 +1,6 @@
 var socket = require('./io/socket')();
-var xbee = require('./io/xbee')();
+var config = require('config');
+var xbee = require('./io/xbee')(config.xbee_destination_64);
 var events = require('./constants/events');
 // var led = require('./io/led')(26);
 var process_end, retry_timeout;
@@ -9,17 +10,24 @@ xbee.on('error', function (err) {
 	// led.blink(200);
 });
 
-xbee.on('exit', function (code) {
-    console.error('Terminated: ' + code);
-	// led.on();
+xbee.on('close', function(){
+	console.log('XBee closed');
 });
 
-xbee.on('debug', function (msg) {
-    console.log(msg);
+xbee.on('data.serial', function (msg) {
+    console.log('data.serial: ' + msg);
 });
 
-xbee.on('rx', function (msg) {
-    console.log(msg);
+xbee.on('frame', function (frame) {
+    console.log('frame: ' + JSON.stringify(frame));
+});
+
+xbee.on('open', function(){
+	console.log('XBee opened');
+});
+
+xbee.on('data', function (msg) {
+    console.log('data: ' + msg);
 	// led.on();
 });
 
@@ -73,6 +81,6 @@ setTimeout(socket.connect, 10000);
 
 process.on('SIGINT', function () {
 	process_end = true;
-    xbee.free();
+    xbee.close();
     socket.disconnect();
 });

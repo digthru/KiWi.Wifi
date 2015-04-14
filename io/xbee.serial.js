@@ -7,6 +7,7 @@ var C = xbee_api.constants;
 function XBee(dest) {
     var self = Emitter.attach(this);	
 	var serialport, xbeeAPI;
+	var connected = false;
 	
 	var getFrame = function(data){
 		return {
@@ -30,10 +31,12 @@ function XBee(dest) {
 		});
 		
 		serialport.on('open', function(){
+			connected = true;
 			self.emit('open');
 		});
 		
 		serialport.on('close', function(){
+			connected = false;
 			self.emit('close');
 		});
 		
@@ -54,7 +57,7 @@ function XBee(dest) {
 	};
 	
     this.write = function (data) {
-        if(serialport && xbeeAPI)
+        if(serialport && xbeeAPI && connected)
 			serialport.write(xbeeAPI.buildFrame(getFrame(data)));
     };
 
@@ -64,6 +67,8 @@ function XBee(dest) {
 			serialport = undefined;
 			xbeeAPI = undefined;
 		}
+		
+		connected = false;
     }
 	
     return this;
