@@ -16,11 +16,11 @@ function XBee(dest) {
 			destination64: dest,
 			broadcastRadius: 0x00,
 			options: 0x00,
-			data: new String(data)
+			data: new String(data).toString()
 		}
 	};
 	
-	this.connect = function(){
+	this.open = function(){
 		xbeeAPI = new xbee_api.XBeeAPI({
 			api_mode: 2
 		});

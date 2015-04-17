@@ -1,6 +1,6 @@
 var socket = require('./io/socket')();
-var config = require('config');
-var xbee = require('./io/xbee')(config.xbee_destination_64);
+var config = require('./config');
+var xbee = require('./io/xbee.serial')(config.xbee_destination_64);
 var events = require('./constants/events');
 // var led = require('./io/led')(26);
 var process_end, retry_timeout;
@@ -29,6 +29,10 @@ xbee.on('open', function(){
 xbee.on('data', function (msg) {
     console.log('data: ' + msg);
 	// led.on();
+	switch(msg){
+		case 'lock': return socket.send({event: events.lock_lock_command_success, locked: true}); 
+		case 'unlock': return socket.send({event: events.lock_unlock_command_success, locked: false}); 
+	}
 });
 
 socket.on('connect', function () {
@@ -65,19 +69,18 @@ socket.on('message', function (data) {
     switch (data.event) {
         case events.lock_lock_command:
 			xbee.write('lock');
-            socket.send({event: events.lock_lock_command_success, locked: true});
             break;
         case events.lock_unlock_command:
 			xbee.write('unlock');
-            socket.send({event: events.lock_unlock_command_success, locked: false});
             break;
         case events.connected:
-            socket.send({event: events.lock_manual, locked: true});
+			xbee.write('request');
             break;
     }
 });
 
-setTimeout(socket.connect, 10000);
+socket.connect();
+xbee.open();
 
 process.on('SIGINT', function () {
 	process_end = true;

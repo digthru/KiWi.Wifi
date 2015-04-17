@@ -1,5 +1,6 @@
 var config = require('./../config');
 var xbee = require('./../io/xbee.serial')(config.xbee_destination_64);
+var toggle = 0;
 
 xbee.on('error', function (err) {
     console.error('error: ' + err);
@@ -7,7 +8,10 @@ xbee.on('error', function (err) {
 
 xbee.on('data', function (msg) {
     console.log('data: ' + msg);
-	xbee.write('unlock');
+	setTimeout(function(){
+		console.log('Sending...');
+		xbee.write(toggle++ % 2 ? 'unlock' : 'lock');
+	}, 4000);
 });
 
 xbee.on('data.serial', function (msg) {
@@ -19,7 +23,8 @@ xbee.on('frame', function (frame) {
 });
 
 xbee.on('open', function(){
-	xbee.write('unlock');
+	console.log('Sending...');
+	xbee.write('lock');
 });
 
 xbee.on('close', function(){
