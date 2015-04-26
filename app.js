@@ -1,4 +1,5 @@
-var led = require('./io/led')(26);
+var power_led = require('./io/led')(21);
+var conn_led = require('./io/led')(26);
 var socket = require('./io/socket')();
 var config = require('./config');
 var xbee = require('./io/xbee.serial')(config.xbee_destination_64);
@@ -7,7 +8,7 @@ var process_end, retry_timeout;
 
 xbee.on('error', function (err) {
     console.error(err);
-    led.blink(500);
+    conn_led.blink(500);
 });
 
 xbee.on('close', function(){
@@ -29,7 +30,7 @@ console.log('whatsup2');
 
 xbee.on('data', function (msg) {
     console.log('data: ' + msg);
-	led.on();
+	conn_led.on();
 	switch(msg){
 		case 'lock': return socket.send({event: events.lock_lock_command_success, locked: true}); 
 		case 'unlock': return socket.send({event: events.lock_unlock_command_success, locked: false}); 
@@ -39,7 +40,7 @@ xbee.on('data', function (msg) {
 socket.on('connect', function () {
     console.log('Socket connnected');
     socket.bounce();
-    led.on();
+    conn_led.on();
 });
 
 socket.on('disconnect', function () {
@@ -53,7 +54,7 @@ socket.on('disconnect', function () {
 
 socket.on('error', function (err) {
     console.error(err);
-    led.blink(500);
+    conn_led.blink(500);
     if(!process_end) {
 		console.log('Socket retrying in 5 seconds');
 		clearTimeout(retry_timeout);
@@ -64,7 +65,7 @@ socket.on('error', function (err) {
 socket.on('message', function (data) {
     console.log(data);
     
-    led.blink(500);
+    conn_led.blink(500);
     setTimeout(led.on, 1500);
     
     switch (data.event) {
@@ -80,6 +81,7 @@ socket.on('message', function (data) {
     }
 });
 
+power_led.on();
 socket.connect();
 xbee.open();
 
