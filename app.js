@@ -87,4 +87,5 @@ process.on('SIGINT', function () {
 	process_end = true;
     xbee.close();
     socket.disconnect();
+    setTimeout(process.exit, 800);
 });

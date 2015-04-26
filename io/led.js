@@ -20,7 +20,6 @@ function Led(pin) {
     this.blink = function (speed) {
         if (blink_interval_id && speed == blink_speed) return;
 	blink_speed = speed;
-	console.log(speed);
         clearInterval(blink_interval_id);
         blink_interval_id = setInterval(function () {
             if (led) led.writeSync(led.readSync() === 0 ? 1 : 0);
