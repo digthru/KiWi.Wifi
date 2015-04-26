@@ -31,7 +31,7 @@ xbee.on('close', function(){
 	console.log('XBee connection closed');
 });
 
-xbee.connect();
+xbee.open();
 
 process.on('SIGINT', function () {
     xbee.close();
