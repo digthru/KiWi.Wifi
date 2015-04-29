@@ -11,6 +11,6 @@ module.exports = {
     lock_serial: 'prototype',
     domain: 'kiwi.t.proxylocal.com',
     production: true,
-    xbee_destination_64: "0013A20040B2202F",
+    xbee_destination_64: "0013A200408A20BA",
     bounce_delay: 8000 // ms
 };

@@ -44,7 +44,10 @@ function Socket() {
             socket.onmessage = function (msg) {
                 try {
                     var data = JSON.parse(msg.data);
-                    if(data.event == events.bounce) bounce_in++;
+                    if(data.event == events.bounce) {
+			console.log(msg.data);
+			bounce_in++;
+		    }
                     else self.emit('message', data);
                 } catch (e) {
                     console.error(e);

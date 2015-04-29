@@ -1,5 +1,7 @@
 var Gpio = require('onoff').Gpio;
 
+var emp = function(){};
+
 function Led(pin) {
 
     var led;
@@ -15,14 +17,12 @@ function Led(pin) {
     var blink_interval_id = 0;
     var blink_speed = 0;
 
-    console.log('here');
-
     this.blink = function (speed) {
         if (blink_interval_id && speed == blink_speed) return;
 	blink_speed = speed;
         clearInterval(blink_interval_id);
         blink_interval_id = setInterval(function () {
-            if (led) led.writeSync(led.readSync() === 0 ? 1 : 0);
+            if (led) led.write(led.readSync() === 0 ? 1 : 0, emp);
         }, speed || 500);
     }
 
@@ -41,13 +41,13 @@ function Led(pin) {
     this.off = function () {
         clearInterval(blink_interval_id);
 	blink_speed = 0;
-        if (led) led.writeSync(0);
+        if (led) led.write(0, emp);
     }
 
     this.on = function () {
         clearInterval(blink_interval_id);
 	blink_speed = 0;
-        if (led) led.writeSync(1);
+        if (led) led.write(1, emp);
     }
 
     return this;

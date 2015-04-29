@@ -24,7 +24,6 @@ xbee.on('frame', function (frame) {
 });
 
 xbee.on('open', function(){
-console.log('whatsup2');
 	console.log('XBee opened');
 });
 
@@ -66,7 +65,7 @@ socket.on('message', function (data) {
     console.log(data);
     
     conn_led.blink(500);
-    setTimeout(led.on, 1500);
+    setTimeout(conn_led.on, 1500);
     
     switch (data.event) {
         case events.lock_lock_command:
@@ -82,11 +81,11 @@ socket.on('message', function (data) {
 });
 
 power_led.on();
-socket.connect();
 xbee.open();
+socket.connect();
 
 process.on('SIGINT', function () {
-	process_end = true;
+    process_end = true;
     xbee.close();
     socket.disconnect();
     setTimeout(process.exit, 800);

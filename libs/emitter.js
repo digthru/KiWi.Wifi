@@ -28,6 +28,8 @@ function Emitter(attachTo) {
     self.emit = self.broadcast = self.fireListeners;
 
     self.on = function (type, callback) {
+	if(Object.keys(arguments).length < 2) return;
+
         type = type + "";
         if (typeof listeners[type] === 'undefined') {
             listeners[type] = {};

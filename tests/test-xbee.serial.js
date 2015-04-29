@@ -19,7 +19,7 @@ xbee.on('data.serial', function (msg) {
 });
 
 xbee.on('frame', function (frame) {
-    console.log('frame: ' + JSON.stringify(frame));
+    // console.log('frame: ' + JSON.stringify(frame));
 });
 
 xbee.on('open', function(){
